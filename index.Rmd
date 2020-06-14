@@ -1,0 +1,187 @@
+---
+title: "PPP1"
+author: "Dimitar Pelivanov - 89171103"
+date: "6/14/2020"
+output: 
+  html_document: 
+    theme: lumen
+    toc: yes
+    toc_float: yes
+---
+
+```{r setup, include=FALSE, message=FALSE, error=TRUE}
+
+knitr::opts_chunk$set(echo = TRUE)
+library(knitr)
+library(rmarkdown)
+library(tidyverse)
+library(ggplot2)
+
+```
+
+```{r echo=FALSE}
+df <- read.csv(file = "avocado.csv")
+
+```
+
+
+# Introduction
+
+<font size="4">Hi everyone, in this project we will talk about the avocados.Also known as an alligator pear or butter fruit, the versatile avocado is the only fruit that provides a substantial amount of healthy monounsaturated fatty acids (MUFA). Avocados are a naturally nutrient-dense food and contain nearly 20 vitamins and minerals.
+</font>
+
+<font size="4">
+It is a well known fact that Millenials LOVE Avocado Toast. It's also a well known fact that all Millenials live in their parents basements.
+
+Clearly, they aren't buying home because they are buying too much Avocado Toast!
+
+But maybe there's hope… if a Millenial could find a city with cheap avocados, they could live out the Millenial American Dream.
+</font>
+
+<font size="4">
+The main focus for this project will be analyzing the data from our avocado sales in the paste few years in different regions.
+</font>
+
+
+# Presentation and description of the problem
+
+<font size="4">
+
+The table below represents weekly 2018 retail scan data for National retail volume (units) and price. Retail scan data comes directly from retailers’ cash registers based on actual retail sales of Hass avocados. Starting in 2013, the table below reflects an expanded, multi-outlet retail data set. Multi-outlet reporting includes an aggregation of the following channels: grocery, mass, club, drug, dollar and military. The Average Price (of avocados) in the table reflects a per unit (per avocado) cost, even when multiple units (avocados) are sold in bags. The Product Lookup codes (PLU’s) in the table are only for Hass avocados. Other varieties of avocados (e.g. greenskins) are not included in this table.
+
+**Some relevant columns in the dataset:**
+
+
+- Date - The date of the observation
+- AveragePrice - the average price of a single avocado
+- Total Volume - Total number of avocados sold
+- year - the year
+- Region - the city or region of the observation
+
+
+*We want to compare, research this data set and conclude which region is the best for selling avocados or which region is the region where the people are eating* ***very much avocados :D.***
+
+</font>
+
+
+# Data presentation
+
+## The avocados date represented in the table below
+
+```{r echo=FALSE}
+
+df1<-df[,c(2,3,4,13,14)]
+paged_table(df1, options = list(rows.print = 15))
+
+```
+...
+
+<font size="4">
+
+We have data for different date, data for average price, total number of avocados sold, the year and region.
+
+</font>
+
+
+## Different regions we have
+
+```{r echo=FALSE}
+
+paged_table(df1 %>% group_by(region) %>% select(region) %>% unique(), options = list(rows.print = 15))
+
+```
+
+
+## Average price of avocado for all research dates for each region histogramic view
+
+```{r echo=FALSE}
+
+df2<-df1 %>% group_by(region) %>% select(region,AveragePrice) %>% summarise_if(is.numeric,.funs = list(mean))
+
+
+```
+
+
+```{r echo=FALSE}
+ggplot(df2,aes(AveragePrice,fill=region)) + geom_histogram(binwidth = 0.1)
+
+```
+
+
+## Total sales for all research dates for each region
+
+
+```{r echo=FALSE}
+
+df3<-df1 %>% group_by(region) %>% select(region,Total.Volume) %>% summarise_if(is.numeric,.funs = list(sum))
+paged_table(df3, options = list(rows.print = 15))
+
+```
+
+**Total Sales in BaltimoreWashington**
+
+
+```{r echo=FALSE}
+ggplot(df3[3,],aes(x=Total.Volume))+ theme_bw()+geom_bar(aes(Total.Volume,fill=Total.Volume))+labs(y="BaltimoreWashington")
+```
+
+
+
+**Total Sales in Albany**
+
+
+```{r echo=FALSE}
+ggplot(df3[2,],aes(x=Total.Volume))+ theme_bw()+geom_bar(aes(Total.Volume,fill=Total.Volume))+labs(y="ALbany")
+```
+
+
+**Compared sales Albany/BaltimoreWashington**
+
+
+```{r echo=FALSE}
+ggplot(data=df3[c(1,3),],aes(x=region,y=Total.Volume))+geom_bar(aes(fill=Total.Volume),stat = "identity")
+```
+
+**Total sales for each Region**
+
+
+```{r echo=FALSE}
+ggplot(data=df3[,],aes(x=substring(region, 1, 2),y=Total.Volume))+geom_bar(aes(fill=Total.Volume),stat = "identity")
+```
+
+**The best average price for avocado is in Houston it is**
+
+```{r echo=FALSE}
+min(df2$AveragePrice)
+
+```
+**dollars $. **
+
+
+**The minimum price for avocado in each region**
+```{r echo=FALSE}
+new <- df1 %>% group_by(region) %>% select(region,AveragePrice) %>% summarise_if(is.numeric,.funs = list(min))
+paged_table(new, options = list(rows.print = 15))
+```
+**The lowest price for avocado is in in CincinnatiDayton it cost **
+
+
+```{r echo=FALSE}
+min(new$AveragePrice)
+```
+**dollars**
+
+# Conclusion
+
+<font size="4">
+After the analysis of the data for avocado sales we can conclude that there are plenty of people who eats avocados.
+We can also get a review for that in which cities can millenials have their avocado toast AND buy a home?
+The lowes price is in CincinnatiDayton so there are the hapiest people who loves avocado.So the citizens of Housten can be happy becaus they have the best average price for avocado.
+Conclusion is saying 'Eat Avocado Avocado is healthy'.
+
+</font>
+
+# Reference
+<font size="8">
+[Avocado DataSet](https://www.kaggle.com/neuromusic/avocado-prices)
+</font>
